@@ -8,9 +8,75 @@ import cv2
 import streamlit as st
 from keras import models
 import mediapipe as mp
-from streamlit_joint_angle_prediction import grade_prediction
+import numpy as np
+import math
+#from streamlit_joint_angle_prediction import grade_prediction
 import time
 
+###
+def angles_calculation(landmark_0, landmark_1, landmark_2):
+    
+    ba = np.array(landmark_0) - np.array(landmark_1)
+    bc = np.array(landmark_2) - np.array(landmark_1)
+    
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))  
+    angle = np.arccos(cosine_angle)
+    angle = round(math.degrees(angle))
+    angle = 180 - angle
+
+    return angle
+
+def grade_prediction(landmarks_3d, model):
+    
+    idx = []
+    mdl = []
+    rng = []
+    pky = []
+    data = []
+    # calculate joint angles
+    # index
+    idx_dip = angles_calculation(landmarks_3d[8], landmarks_3d[7], landmarks_3d[6])
+    idx_pip = angles_calculation(landmarks_3d[7], landmarks_3d[6], landmarks_3d[5])
+    idx_mcp = angles_calculation(landmarks_3d[6], landmarks_3d[5], landmarks_3d[0])
+    idx.append(idx_dip)
+    idx.append(idx_pip)
+    idx.append(idx_mcp)
+    
+    # middle
+    mdl_dip = angles_calculation(landmarks_3d[12], landmarks_3d[11], landmarks_3d[10])
+    mdl_pip = angles_calculation(landmarks_3d[11], landmarks_3d[10], landmarks_3d[9])
+    mdl_mcp = angles_calculation(landmarks_3d[10], landmarks_3d[9], landmarks_3d[0])
+    mdl.append(mdl_dip)
+    mdl.append(mdl_pip)
+    mdl.append(mdl_mcp)
+    
+    # ring
+    rng_dip = angles_calculation(landmarks_3d[16], landmarks_3d[15], landmarks_3d[14])
+    rng_pip = angles_calculation(landmarks_3d[15], landmarks_3d[14], landmarks_3d[13])
+    rng_mcp = angles_calculation(landmarks_3d[14], landmarks_3d[13], landmarks_3d[0])
+    rng.append(rng_dip)
+    rng.append(rng_pip)
+    rng.append(rng_mcp)
+    
+    # pinky
+    pky_dip = angles_calculation(landmarks_3d[20], landmarks_3d[19], landmarks_3d[18])
+    pky_pip = angles_calculation(landmarks_3d[19], landmarks_3d[18], landmarks_3d[17])
+    pky_mcp = angles_calculation(landmarks_3d[18], landmarks_3d[17], landmarks_3d[0])
+    pky.append(pky_dip)
+    pky.append(pky_pip)
+    pky.append(pky_mcp)
+    
+    data.append(idx)
+    data.append(mdl)
+    data.append(rng)
+    data.append(pky)
+    data = np.array(data)
+    grades = model.predict(data)
+    grades = np.argmax(grades,axis = 1)
+    
+    return grades + 1
+
+###
 st.title("Webcam Live Feed")
 run = st.checkbox('Run')
 FRAME_WINDOW = st.image([])
