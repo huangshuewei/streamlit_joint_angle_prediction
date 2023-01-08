@@ -1,0 +1,10 @@
+opencv-python
+opencv-contrib-python
+streamlit==1.4.0
+numpy
+keras
+tensorflow
+scikit-image
+mediapipe
+python-math
+python-time
