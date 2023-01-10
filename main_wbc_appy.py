@@ -179,3 +179,4 @@ webrtc_ctx = webrtc_streamer(
     async_processing=True,
 )
 
+print(webrtc_ctx)
