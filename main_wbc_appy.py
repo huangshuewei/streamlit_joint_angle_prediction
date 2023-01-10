@@ -171,7 +171,7 @@ RTC_CONFIGURATION = RTCConfiguration(
     )
 webrtc_ctx = webrtc_streamer(
     key="WYH",
-    mode=WebRtcMode.SENDONLY,
+    mode=WebRtcMode.RECVONLY,
     rtc_configuration=RTC_CONFIGURATION,
     media_stream_constraints={"video": True, "audio": False},
     video_processor_factory=VideoProcessor,
