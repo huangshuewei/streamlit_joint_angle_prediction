@@ -1,5 +1,6 @@
 opencv-python
 opencv-contrib-python
+streamlit_webrtc  
 streamlit==1.4.0
 numpy
 keras
