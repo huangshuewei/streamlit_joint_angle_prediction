@@ -149,7 +149,6 @@ def img_process(frame):
         
     return frame
     
-@st.cache(ttl=5)
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
