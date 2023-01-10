@@ -183,5 +183,3 @@ webrtc_ctx = webrtc_streamer(
     video_processor_factory=VideoProcessor,
     async_processing=True,
 )
-
-print(webrtc_ctx)
