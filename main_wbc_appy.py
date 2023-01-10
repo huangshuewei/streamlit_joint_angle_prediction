@@ -16,7 +16,7 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import av
 
 ###
-@st.cache(ttl=24*3600)
+@st.cache(ttl=1*3600)
 def angles_calculation(landmark_0, landmark_1, landmark_2):
     
     ba = np.array(landmark_0) - np.array(landmark_1)
@@ -29,8 +29,10 @@ def angles_calculation(landmark_0, landmark_1, landmark_2):
 
     return angle
 
-@st.cache(ttl=24*3600)
-def grade_prediction(landmarks_3d, model):
+@st.cache(ttl=1*3600)
+def grade_prediction(landmarks_3d):
+    # load model
+    model = models.load_model("NN_model_1.h5",compile=False)
     
     idx = []
     mdl = []
@@ -80,7 +82,7 @@ def grade_prediction(landmarks_3d, model):
     
     return grades + 1
 
-@st.cache(ttl=24*3600)
+@st.cache(ttl=1*3600)
 def my_putText(frame, grades):
     
     frame = cv2.putText(frame,
@@ -118,8 +120,15 @@ def my_putText(frame, grades):
     
     return frame
 
-@st.cache(ttl=24*3600)
+@st.cache(ttl=1*3600)
 def img_process(frame):
+    # MediaPipe Hand
+    mpHands = mp.solutions.hands
+    hands = mpHands.Hands(static_image_mode=False
+                          ,max_num_hands=1,
+                          min_detection_confidence=0.5)
+    mpDraw = mp.solutions.drawing_utils
+    
     imageRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # do peocess MediaPipe Hand
     results = hands.process(imageRGB)
@@ -139,14 +148,13 @@ def img_process(frame):
     
     if len(landmarks_3d) == 21:
         # grade prediction
-        grades = grade_prediction(landmarks_3d,model)
+        grades = grade_prediction(landmarks_3d)
         frame = my_putText(frame, grades)
     else:
         frame = frame
         
     return frame
 
-@st.cache(ttl=24*3600)
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
@@ -155,31 +163,23 @@ class VideoProcessor:
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 ###
-st.title("Webcam Live Feed")
 
-# load model
-model = models.load_model("NN_model_1.h5",compile=False)
+def main():
+    st.title("Webcam Live Feed")
 
-# for calculate FPS
-previousTime = 0
-currentTime = 0
+    RTC_CONFIGURATION = RTCConfiguration(
+        {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    )
+    
+    
+    webrtc_ctx = webrtc_streamer(
+        key="WYH",
+        mode=WebRtcMode.SENDRECV,
+        rtc_configuration=RTC_CONFIGURATION,
+        media_stream_constraints={"video": True, "audio": False},
+        video_processor_factory=VideoProcessor,
+        async_processing=True,
+    )
 
-# MediaPipe Hand
-mpHands = mp.solutions.hands
-hands = mpHands.Hands(static_image_mode=False
-                      ,max_num_hands=1,
-                      min_detection_confidence=0.5)
-mpDraw = mp.solutions.drawing_utils
-
-RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-)
-
-webrtc_ctx = webrtc_streamer(
-    key="WYH",
-    mode=WebRtcMode.SENDRECV,
-    rtc_configuration=RTC_CONFIGURATION,
-    media_stream_constraints={"video": True, "audio": False},
-    video_processor_factory=VideoProcessor,
-    async_processing=True,
-)
+if __name__ == "__main__":
+    main()
