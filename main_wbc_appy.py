@@ -148,20 +148,8 @@ def img_process(frame):
         frame = frame
         
     return frame
-
-def stream():
-    RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
-    webrtc_ctx = webrtc_streamer(
-        key="WYH",
-        mode=WebRtcMode.SENDONLY,
-        rtc_configuration=RTC_CONFIGURATION,
-        media_stream_constraints={"video": True, "audio": False},
-        video_processor_factory=VideoProcessor,
-        async_processing=True,
-    )
-
+    
+@st.cache(ttl=5)
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
@@ -179,8 +167,17 @@ hands = mpHands.Hands(static_image_mode=False
 mpDraw = mp.solutions.drawing_utils
 
 st.title("Webcam Live Feed")
-
-stream()
+RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    )
+webrtc_ctx = webrtc_streamer(
+    key="WYH",
+    mode=WebRtcMode.SENDONLY,
+    rtc_configuration=RTC_CONFIGURATION,
+    media_stream_constraints={"video": True, "audio": False},
+    video_processor_factory=VideoProcessor,
+    async_processing=True,
+)
 
 # if __name__ == "__main__":
 # main()
