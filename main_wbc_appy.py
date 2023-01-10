@@ -164,21 +164,20 @@ class VideoProcessor:
 
 ###
 
-@st.cache(ttl=1*3600)
-def main():
-    st.title("Webcam Live Feed")
 
-    RTC_CONFIGURATION = RTCConfiguration(
-        {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
-    webrtc_ctx = webrtc_streamer(
-        key="WYH",
-        mode=WebRtcMode.SENDRECV,
-        rtc_configuration=RTC_CONFIGURATION,
-        media_stream_constraints={"video": True, "audio": False},
-        video_processor_factory=VideoProcessor,
-        async_processing=True,
-    )
+st.title("Webcam Live Feed")
+
+RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+)
+webrtc_ctx = webrtc_streamer(
+    key="WYH",
+    mode=WebRtcMode.SENDRECV,
+    rtc_configuration=RTC_CONFIGURATION,
+    media_stream_constraints={"video": True, "audio": False},
+    video_processor_factory=VideoProcessor,
+    async_processing=True,
+)
 
 # if __name__ == "__main__":
-main()
+# main()
