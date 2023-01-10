@@ -149,7 +149,7 @@ def img_process(frame):
         
     return frame
 
-@st.cache(ttl=1)
+@st.cache(ttl=3600)
 def stream():
     RTC_CONFIGURATION = RTCConfiguration(
     {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
