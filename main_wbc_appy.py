@@ -121,7 +121,7 @@ def my_putText(frame, grades):
     return frame
 
 @st.cache(ttl=24*3600)
-def img_process(frame, hands, mpDraw):
+def img_process(frame):
     
     imageRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # do peocess MediaPipe Hand
