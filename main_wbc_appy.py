@@ -16,7 +16,7 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import av
 
 ###
-@st.cache(ttl=60)
+@st.cache(ttl=2)
 def angles_calculation(landmark_0, landmark_1, landmark_2):
     
     ba = np.array(landmark_0) - np.array(landmark_1)
@@ -29,7 +29,7 @@ def angles_calculation(landmark_0, landmark_1, landmark_2):
 
     return angle
 
-@st.cache(ttl=60)
+@st.cache(ttl=2)
 def grade_prediction(landmarks_3d):
     # load model
     model = models.load_model("NN_model_1.h5",compile=False)
@@ -82,7 +82,7 @@ def grade_prediction(landmarks_3d):
     
     return grades + 1
 
-@st.cache(ttl=60)
+@st.cache(ttl=2)
 def my_putText(frame, grades):
     
     frame = cv2.putText(frame,
@@ -120,7 +120,7 @@ def my_putText(frame, grades):
     
     return frame
 
-@st.cache(ttl=60)
+@st.cache(ttl=2)
 def img_process(frame):
     
     imageRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -149,7 +149,7 @@ def img_process(frame):
         
     return frame
 
-@st.cache(ttl=60)
+@st.cache(ttl=2)
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
