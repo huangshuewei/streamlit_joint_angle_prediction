@@ -16,6 +16,7 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import av
 
 ###
+@st.cache(ttl=24*3600)
 def angles_calculation(landmark_0, landmark_1, landmark_2):
     
     ba = np.array(landmark_0) - np.array(landmark_1)
@@ -28,6 +29,7 @@ def angles_calculation(landmark_0, landmark_1, landmark_2):
 
     return angle
 
+@st.cache(ttl=24*3600)
 def grade_prediction(landmarks_3d, model):
     
     idx = []
@@ -78,6 +80,7 @@ def grade_prediction(landmarks_3d, model):
     
     return grades + 1
 
+@st.cache(ttl=24*3600)
 def my_putText(frame, grades):
     
     frame = cv2.putText(frame,
@@ -115,6 +118,7 @@ def my_putText(frame, grades):
     
     return frame
 
+@st.cache(ttl=24*3600)
 def img_process(frame):
     imageRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # do peocess MediaPipe Hand
@@ -142,6 +146,7 @@ def img_process(frame):
         
     return frame
 
+@st.cache(ttl=24*3600)
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
