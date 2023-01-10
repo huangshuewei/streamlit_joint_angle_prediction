@@ -149,6 +149,20 @@ def img_process(frame):
         
     return frame
 
+@st.cache(ttl=1)
+def stream():
+    RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    )
+    webrtc_ctx = webrtc_streamer(
+        key="WYH",
+        mode=WebRtcMode.SENDONLY,
+        rtc_configuration=RTC_CONFIGURATION,
+        media_stream_constraints={"video": True, "audio": False},
+        video_processor_factory=VideoProcessor,
+        async_processing=True,
+    )
+
 class VideoProcessor:
     def recv(self, frame):
         frame = frame.to_ndarray(format="bgr24")
@@ -167,17 +181,7 @@ mpDraw = mp.solutions.drawing_utils
 
 st.title("Webcam Live Feed")
 
-RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-)
-webrtc_ctx = webrtc_streamer(
-    key="WYH",
-    mode=WebRtcMode.SENDRECV,
-    rtc_configuration=RTC_CONFIGURATION,
-    media_stream_constraints={"video": True, "audio": False},
-    video_processor_factory=VideoProcessor,
-    async_processing=True,
-)
+stream()
 
 # if __name__ == "__main__":
 # main()
