@@ -180,5 +180,5 @@ def main():
         async_processing=True,
     )
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+main()
