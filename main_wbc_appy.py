@@ -121,13 +121,7 @@ def my_putText(frame, grades):
     return frame
 
 @st.cache(ttl=24*3600)
-def img_process(frame):
-    # MediaPipe Hand
-    mpHands = mp.solutions.hands
-    hands = mpHands.Hands(static_image_mode=False
-                          ,max_num_hands=1,
-                          min_detection_confidence=0.5)
-    mpDraw = mp.solutions.drawing_utils
+def img_process(frame, hands, mpDraw):
     
     imageRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # do peocess MediaPipe Hand
@@ -164,6 +158,12 @@ class VideoProcessor:
 
 ###
 
+# MediaPipe Hand
+mpHands = mp.solutions.hands
+hands = mpHands.Hands(static_image_mode=False
+                      ,max_num_hands=1,
+                      min_detection_confidence=0.5)
+mpDraw = mp.solutions.drawing_utils
 
 st.title("Webcam Live Feed")
 
